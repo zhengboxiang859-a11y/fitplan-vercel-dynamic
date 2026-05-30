@@ -1,4 +1,4 @@
-name: Repair And Unpack FitPlan Project
+name: Normalize FitPlan Project Paths
 
 on:
   push:
@@ -9,32 +9,29 @@ permissions:
   contents: write
 
 jobs:
-  unpack:
+  normalize:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Rebuild and unpack archive
+      - name: Move Windows-style filenames into folders
         run: |
           python - <<'PY'
-          import base64
           import pathlib
-          import zipfile
-          missing = 'iei2QSWkjpg2dFiee0pEstvn9YXH6//eyN6lH8jT6PEvQotY3w7PYwiML8RPHdIoM4DBB1AHFYhCiu/li6t4TN9dBcC/9r8Cg+t0dE8+E1A6kDkACABAkIb75xFajA5gaGoB6grOapu9urz6E54IfmBtoclBAYkwsAsj3/ozE9ydHgGNI4pZnvKRAOFQAImEawVoSgwxQuzTKgWgYUJEACvtL9ORyKcIVQ1Ui5ErSGmvuhtHwZaallXPGJUzaWl0szhCPBOtocKGPa2iaMUHz3jLMWZ+4XOb/961vjwQeGBmWDlCBIrYVn5n7x9pzxdhYYzIbiPCaTAnz9iBRUOqfFU7J2bK'
-          p0 = pathlib.Path('project.b64.part00').read_text()
-          data = p0[:654] + missing + p0[654:]
-          for i in range(1, 6):
-              data += pathlib.Path(f'project.b64.part{i:02d}').read_text()
-          pathlib.Path('project.zip').write_bytes(base64.b64decode(data))
-          with zipfile.ZipFile('project.zip') as archive:
-              archive.extractall('.')
-          for part in pathlib.Path('.').glob('project.b64.part*'):
-              part.unlink()
-          pathlib.Path('project.zip').unlink(missing_ok=True)
+          import shutil
+          root = pathlib.Path('.')
+          for item in list(root.iterdir()):
+              if '\\' not in item.name:
+                  continue
+              target = pathlib.Path(*item.name.split('\\'))
+              target.parent.mkdir(parents=True, exist_ok=True)
+              if target.exists():
+                  target.unlink()
+              shutil.move(str(item), str(target))
           PY
-      - name: Commit unpacked project
+      - name: Commit normalized project paths
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
-          git diff --cached --quiet || git commit -m "Unpack FitPlan Vercel project"
+          git diff --cached --quiet || git commit -m "Normalize FitPlan project paths"
           git push
