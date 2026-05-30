@@ -13,34 +13,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Rebuild archive with repaired first chunk
-        run: |
-          {
-            head -c 654 project.b64.part00
-            printf '%s' 'iei2QSWkjpg2dFiee0pEstvn9YXH6//eyN6lH8jT6PEvQotY3w7PYwiML8RPHdIoM4DBB1AHFYhCiu/li6t4TN9dBcC/9r8Cg+t0dE8+E1A6kDkACABAkIb75xFajA5gaGoB6grOapu9urz6E54IfmBtoclBAYkwsAsj3/ozE9ydHgGNI4pZnvKRAOFQAImEawVoSgwxQuzTKgWgYUJEACvtL9ORyKcIVQ1Ui5ErSGmvuhtHwZaallXPGJUzaWl0szhCPBOtocKGPa2iaMUHz3jLMWZ+4XOb/961vjwQeGBmWDlCBIrYVn5n7x9pzxdhYYzIbiPCaTAnz9iBRUOqfFU7J2bK'
-            tail -c +655 project.b64.part00
-            cat project.b64.part01 project.b64.part02 project.b64.part03 project.b64.part04 project.b64.part05
-          } > project.b64
-          base64 -d project.b64 > project.zip
-          unzip -o project.zip
-      - name: Normalize Windows archive paths
+      - name: Rebuild and unpack archive
         run: |
           python - <<'PY'
-          import os, shutil
-          for name in list(os.listdir('.')):
-              if '\\' not in name:
-                  continue
-              target = os.path.join(*name.split('\\'))
-              parent = os.path.dirname(target)
-              if parent:
-                  os.makedirs(parent, exist_ok=True)
-              if os.path.exists(target):
-                  os.remove(target)
-              shutil.move(name, target)
+          import base64
+          import pathlib
+          import zipfile
+          missing = 'iei2QSWkjpg2dFiee0pEstvn9YXH6//eyN6lH8jT6PEvQotY3w7PYwiML8RPHdIoM4DBB1AHFYhCiu/li6t4TN9dBcC/9r8Cg+t0dE8+E1A6kDkACABAkIb75xFajA5gaGoB6grOapu9urz6E54IfmBtoclBAYkwsAsj3/ozE9ydHgGNI4pZnvKRAOFQAImEawVoSgwxQuzTKgWgYUJEACvtL9ORyKcIVQ1Ui5ErSGmvuhtHwZaallXPGJUzaWl0szhCPBOtocKGPa2iaMUHz3jLMWZ+4XOb/961vjwQeGBmWDlCBIrYVn5n7x9pzxdhYYzIbiPCaTAnz9iBRUOqfFU7J2bK'
+          p0 = pathlib.Path('project.b64.part00').read_text()
+          data = p0[:654] + missing + p0[654:]
+          for i in range(1, 6):
+              data += pathlib.Path(f'project.b64.part{i:02d}').read_text()
+          pathlib.Path('project.zip').write_bytes(base64.b64decode(data))
+          with zipfile.ZipFile('project.zip') as archive:
+              archive.extractall('.')
+          for part in pathlib.Path('.').glob('project.b64.part*'):
+              part.unlink()
+          pathlib.Path('project.zip').unlink(missing_ok=True)
           PY
-      - name: Clean archive parts
-        run: |
-          rm -f project.b64 project.zip project.b64.part*
       - name: Commit unpacked project
         run: |
           git config user.name "github-actions[bot]"
