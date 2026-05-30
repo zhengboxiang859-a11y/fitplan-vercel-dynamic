@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FitPlan Admin</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="admin-shell">
+      <aside class="admin-side">
+        <div class="brand-row compact">
+          <span class="brand-mark">A</span>
+          <strong>FitPlan Admin</strong>
+        </div>
+        <p>用户数据收集后台</p>
+        <a class="link-button" href="/">返回 App</a>
+        <button id="adminLogout" class="ghost hidden">退出后台</button>
+      </aside>
+
+      <section class="admin-workspace">
+        <section id="adminLogin" class="auth-panel admin-login">
+          <div class="brand-row">
+            <span class="brand-mark">F</span>
+            <div>
+              <h1>管理员登录</h1>
+              <p>输入管理员口令查看用户数据。</p>
+            </div>
+          </div>
+          <form id="adminLoginForm" class="auth-form">
+            <label><span>管理员口令</span><input name="password" type="password" value="fitplan-admin" required /></label>
+            <button class="primary" type="submit">进入后台</button>
+            <p id="adminMessage" class="message"></p>
+          </form>
+        </section>
+
+        <section id="adminApp" class="hidden">
+          <header class="topbar">
+            <div>
+              <p>Admin Dashboard</p>
+              <h2>用户数据总览</h2>
+            </div>
+            <div class="admin-actions">
+              <button id="adminRefresh">刷新</button>
+              <a id="adminExport" class="primary admin-export" href="#">导出 CSV</a>
+            </div>
+          </header>
+
+          <section id="adminStats" class="admin-stats"></section>
+
+          <section class="admin-grid">
+            <article class="panel">
+              <div class="panel-head"><div><p>Users</p><h3>用户列表</h3></div></div>
+              <div id="adminUsers" class="admin-users"></div>
+            </article>
+            <article class="panel admin-detail-panel">
+              <div class="panel-head"><div><p>Detail</p><h3>用户详情</h3></div></div>
+              <div id="adminDetail" class="admin-detail muted">选择左侧用户查看记录、食谱和训练计划。</div>
+            </article>
+          </section>
+        </section>
+      </section>
+    </main>
+
+    <script src="/admin.js"></script>
+  </body>
+</html>
