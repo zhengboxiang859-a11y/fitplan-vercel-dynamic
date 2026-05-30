@@ -17,9 +17,7 @@ jobs:
         run: |
           {
             head -c 654 project.b64.part00
-            cat <<'EOF'
-iei2QSWkjpg2dFiee0pEstvn9YXH6//eyN6lH8jT6PEvQotY3w7PYwiML8RPHdIoM4DBB1AHFYhCiu/li6t4TN9dBcC/9r8Cg+t0dE8+E1A6kDkACABAkIb75xFajA5gaGoB6grOapu9urz6E54IfmBtoclBAYkwsAsj3/ozE9ydHgGNI4pZnvKRAOFQAImEawVoSgwxQuzTKgWgYUJEACvtL9ORyKcIVQ1Ui5ErSGmvuhtHwZaallXPGJUzaWl0szhCPBOtocKGPa2iaMUHz3jLMWZ+4XOb/961vjwQeGBmWDlCBIrYVn5n7x9pzxdhYYzIbiPCaTAnz9iBRUOqfFU7J2bK
-EOF
+            printf '%s' 'iei2QSWkjpg2dFiee0pEstvn9YXH6//eyN6lH8jT6PEvQotY3w7PYwiML8RPHdIoM4DBB1AHFYhCiu/li6t4TN9dBcC/9r8Cg+t0dE8+E1A6kDkACABAkIb75xFajA5gaGoB6grOapu9urz6E54IfmBtoclBAYkwsAsj3/ozE9ydHgGNI4pZnvKRAOFQAImEawVoSgwxQuzTKgWgYUJEACvtL9ORyKcIVQ1Ui5ErSGmvuhtHwZaallXPGJUzaWl0szhCPBOtocKGPa2iaMUHz3jLMWZ+4XOb/961vjwQeGBmWDlCBIrYVn5n7x9pzxdhYYzIbiPCaTAnz9iBRUOqfFU7J2bK'
             tail -c +655 project.b64.part00
             cat project.b64.part01 project.b64.part02 project.b64.part03 project.b64.part04 project.b64.part05
           } > project.b64
