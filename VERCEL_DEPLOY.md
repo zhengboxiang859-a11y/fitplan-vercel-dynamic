@@ -77,9 +77,28 @@ postgresql://USER:PASSWORD@HOST:5432/DATABASE?sslmode=require
 2. 打开 Vercel。
 3. Import Project。
 4. 选择这个仓库。
-5. Framework Preset 选 Other。
-6. 添加环境变量。
-7. Deploy。
+5. Root Directory 选择 `fitplan-vercel-dynamic`。
+6. Framework Preset 选 Other。
+7. 添加环境变量。
+8. Deploy。
+
+## 部署方式二：Vercel CLI
+
+在本地进入目录：
+
+```bash
+cd fitplan-vercel-dynamic
+npm install
+npx vercel
+```
+
+按提示登录并创建项目。
+
+生产发布：
+
+```bash
+npx vercel --prod
+```
 
 ## 访问地址
 

@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FitPlan Daily</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main id="authView" class="auth-shell">
+      <section class="auth-panel">
+        <div class="brand-row">
+          <span class="brand-mark">F</span>
+          <div>
+            <h1>FitPlan Daily</h1>
+            <p>私人日常饮食与训练规划平台</p>
+          </div>
+        </div>
+        <form id="authForm" class="auth-form">
+          <label><span>姓名</span><input name="name" value="Demo User" autocomplete="name" /></label>
+          <label><span>邮箱</span><input name="email" type="email" value="demo@fitplan.local" autocomplete="email" required /></label>
+          <label><span>密码</span><input name="password" type="password" value="fitplan123" autocomplete="current-password" required /></label>
+          <div class="auth-actions">
+            <button type="button" id="loginBtn">登录</button>
+            <button type="submit" class="primary">注册并进入</button>
+          </div>
+          <p id="authMessage" class="message"></p>
+        </form>
+      </section>
+      <section class="auth-preview">
+        <div class="preview-card"><span>Meal Builder</span><strong>点击选食材</strong><em>主食 / 蛋白质 / 蔬菜 / 脂肪</em></div>
+        <div class="preview-card"><span>Training Swap</span><strong>动作可替换</strong><em>每天训练部位不同</em></div>
+      </section>
+    </main>
+
+    <main id="appView" class="app-shell hidden">
+      <aside class="sidebar">
+        <div class="brand-row compact">
+          <span class="brand-mark">F</span>
+          <strong>FitPlan Daily</strong>
+        </div>
+        <nav id="sideNav">
+          <a data-page="dashboard" href="#dashboard" class="active">Dashboard</a>
+          <a data-page="body" href="#body">Body Data</a>
+          <a data-page="meals" href="#meals">Meals</a>
+          <a data-page="training" href="#training">Training</a>
+          <a data-page="progress" href="#progress">Progress</a>
+          <a data-page="ai" href="#ai">AI Coach</a>
+          <a data-page="settings" href="#settings">Settings</a>
+        </nav>
+        <button id="logoutBtn" class="ghost">退出登录</button>
+      </aside>
+
+      <section class="workspace">
+        <header class="topbar">
+          <div>
+            <p id="todayLabel">Today</p>
+            <h2 id="pageTitle">每日规划工作台</h2>
+          </div>
+          <div class="user-chip">
+            <span id="userInitial">U</span>
+            <div>
+              <strong id="userName">User</strong>
+              <small id="userEmail">user@example.com</small>
+            </div>
+          </div>
+        </header>
+
+        <section id="goalControls" class="control-strip">
+          <div>
+            <span>目标阶段</span>
+            <div class="segmented" data-field="goal">
+              <button data-value="fat_loss" class="active">Fat Loss</button>
+              <button data-value="muscle_gain">Muscle Gain</button>
+              <button data-value="maintain">Maintain</button>
+            </div>
+          </div>
+          <div>
+            <span>执行策略</span>
+            <div class="segmented" data-field="strategy">
+              <button data-value="training_diet" class="active">Training + Diet</button>
+              <button data-value="diet_only">Diet Only</button>
+              <button data-value="training_focus">Training Focus</button>
+            </div>
+          </div>
+        </section>
+
+        <section id="dashboardPage" class="page active-page" data-page="dashboard">
+          <div class="dashboard-overview">
+            <article class="panel overview-main">
+              <div class="panel-head">
+                <div><p>Today Snapshot</p><h3>今日总览</h3></div>
+                <button id="refreshBtn" class="icon-btn" aria-label="刷新">↻</button>
+              </div>
+              <div id="metricCards" class="metric-grid compact-metrics"></div>
+            </article>
+
+            <article class="panel energy-panel">
+              <div class="panel-head">
+                <div><p>Daily Energy</p><h3>热量与缺口</h3></div>
+                <strong id="deficitBadge" class="status-pill">0 kcal</strong>
+              </div>
+              <div class="energy-layout">
+                <div class="ring" style="--progress: 0"><strong id="intakeProgress">0%</strong><span>摄入进度</span></div>
+                <div id="energyStats" class="stat-list"></div>
+              </div>
+            </article>
+
+            <article class="panel summary-card training-summary-card">
+              <div class="panel-head"><div><p>Training</p><h3>今日训练摘要</h3></div></div>
+              <div id="trainingSummary"></div>
+              <button class="link-button" data-go-page="training">查看完整训练</button>
+            </article>
+
+            <article class="panel summary-card meal-summary-card">
+              <div class="panel-head"><div><p>Meals</p><h3>今日饮食摘要</h3></div></div>
+              <div id="mealSummary"></div>
+              <button class="link-button" data-go-page="meals">自定义今日食谱</button>
+            </article>
+
+            <article class="panel record-panel">
+              <div class="panel-head"><div><p>Quick Record</p><h3>保存今日记录</h3></div></div>
+              <form id="recordForm" class="record-form compact-record">
+                <input name="record_date" type="date" />
+                <input name="weight_kg" type="number" step="0.1" placeholder="体重 kg" />
+                <input name="waist_cm" type="number" step="0.1" placeholder="腰围 cm" />
+                <input name="body_fat_pct" type="number" step="0.1" placeholder="体脂 %" />
+                <input name="steps" type="number" placeholder="步数" />
+                <input name="sleep_hours" type="number" step="0.1" placeholder="睡眠 h" />
+                <input name="calories_in" type="number" placeholder="摄入 kcal" />
+                <label class="check-row"><input name="workout_done" type="checkbox" /> 已训练</label>
+                <textarea name="notes" placeholder="备注：饥饿感、训练状态、饮食执行情况"></textarea>
+                <button class="primary" type="submit">Save Record</button>
+              </form>
+            </article>
+          </div>
+        </section>
+
+        <section id="bodyPage" class="page" data-page="body">
+          <div class="two-column">
+            <article class="panel">
+              <div class="panel-head"><div><p>Saved Records</p><h3>已保存身体记录</h3></div></div>
+              <div id="bodyRecordList" class="record-list"></div>
+            </article>
+            <article class="panel">
+              <div class="panel-head"><div><p>Analysis</p><h3>身体指数分析</h3></div></div>
+              <div id="bodyAnalysis" class="analysis-list"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="mealsPage" class="page" data-page="meals">
+          <div class="meal-builder-layout">
+            <article class="panel">
+              <div class="panel-head">
+                <div><p>Meal Builder</p><h3>点击定制每日食谱</h3></div>
+                <input id="mealDate" type="date" />
+              </div>
+              <div id="mealSelection" class="meal-selection"></div>
+              <div class="meal-actions">
+                <button id="saveMealsBtn" class="primary">保存今日食谱</button>
+                <button id="addCheatBtn">添加放纵餐</button>
+              </div>
+              <div id="cheatEditor" class="cheat-editor hidden">
+                <input id="cheatName" placeholder="放纵餐名称" />
+                <input id="cheatCalories" type="number" placeholder="热量 kcal" />
+                <input id="cheatNote" placeholder="备注" />
+                <button id="confirmCheatBtn">加入</button>
+              </div>
+            </article>
+            <article class="panel">
+              <div class="panel-head"><div><p>Current Plate</p><h3>当天食谱</h3></div></div>
+              <div id="mealPageList" class="meal-list"></div>
+              <div id="macroPageBar" class="macro-bar vertical"></div>
+              <div id="cheatList" class="tips-list"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="trainingPage" class="page" data-page="training">
+          <article class="panel">
+            <div class="panel-head">
+              <div><p>Weekly Split</p><h3>一周训练与动作替换</h3></div>
+              <select id="equipment"><option value="gym">健身房</option><option value="home">居家</option></select>
+            </div>
+            <div id="weekTraining" class="week-grid training-grid"></div>
+          </article>
+        </section>
+
+        <section id="progressPage" class="page" data-page="progress">
+          <article class="panel">
+            <div class="panel-head"><div><p>Progress</p><h3>进度趋势</h3></div></div>
+            <div id="progressCharts" class="charts"></div>
+          </article>
+        </section>
+
+        <section id="aiPage" class="page" data-page="ai">
+          <div class="ai-layout">
+            <article class="panel ai-chat-panel">
+              <div class="panel-head">
+                <div><p>DeepSeek AI</p><h3>AI 问答教练</h3></div>
+                <button id="clearAiBtn">清空对话</button>
+              </div>
+              <div id="aiMessages" class="ai-messages"></div>
+              <form id="aiForm" class="ai-form">
+                <textarea id="aiQuestion" placeholder="输入你的问题，例如：今天训练后怎么安排晚餐？为什么体重没下降？" required></textarea>
+                <button class="primary" type="submit">发送问题</button>
+              </form>
+              <p id="aiStatus" class="muted"></p>
+            </article>
+            <article class="panel ai-side-panel">
+              <div class="panel-head"><div><p>Examples</p><h3>可以这样问</h3></div></div>
+              <div class="tips-list">
+                <button class="ai-prompt" type="button">根据我今天的身体记录，晚餐怎么搭配更合适？</button>
+                <button class="ai-prompt" type="button">我连续三天热量超标，明天应该怎么调整？</button>
+                <button class="ai-prompt" type="button">今天腿部训练后，需要补多少蛋白质和碳水？</button>
+                <button class="ai-prompt" type="button">减脂期间想吃放纵餐，怎么安排比较合理？</button>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section id="settingsPage" class="page" data-page="settings">
+          <article class="panel">
+            <div class="panel-head"><div><p>Settings</p><h3>基础资料设置</h3></div></div>
+            <form id="profileForm" class="profile-form">
+              <label><span>性别</span><select name="sex"><option value="male">男</option><option value="female">女</option></select></label>
+              <label><span>年龄</span><input name="age" type="number" min="12" max="90" /></label>
+              <label><span>身高 cm</span><input name="height_cm" type="number" min="100" max="230" step="0.1" /></label>
+              <label><span>活动水平</span><select name="activity_level"><option value="sedentary">久坐</option><option value="light">轻活动</option><option value="moderate">中等活动</option><option value="high">高活动</option></select></label>
+              <label><span>每周训练天数</span><input name="training_days" type="number" min="0" max="6" /></label>
+              <label><span>器械条件</span><select name="equipment"><option value="gym">健身房</option><option value="home">居家</option></select></label>
+              <label><span>饮食风格</span><select name="diet_style"><option value="balanced">均衡</option><option value="chinese">中式</option><option value="vegetarian">素食</option></select></label>
+              <button class="primary" type="submit">保存设置</button>
+            </form>
+          </article>
+        </section>
+      </section>
+    </main>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
